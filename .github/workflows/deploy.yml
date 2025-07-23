@@ -3,32 +3,34 @@ name: Deploy React App to GitHub Pages
 on:
   push:
     branches:
-      - main # This workflow will run whenever you push to the 'main' branch
+      - main
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest # Specifies the operating system for the job
-    # --- ADD THIS PERMISSIONS BLOCK ---
+    runs-on: ubuntu-latest
     permissions:
-      contents: write # This grants write access to the GITHUB_TOKEN for repository contents
-    # ----------------------------------
+      contents: write
+
     steps:
-      - name: Checkout Repository # Step 1: Clones your repository to the runner
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Node # Step 2: Sets up Node.js environment
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: "18" # Use a stable Node.js version compatible with your project
+          node-version: "18"
 
-      - name: Install dependencies # Step 3: Installs all project dependencies
+      - name: Install dependencies
         run: npm install
 
-      - name: Build React App # Step 4: Builds your React application for production
+      - name: Build React App
         run: npm run build
 
-      - name: Deploy to GitHub Pages # Step 5: Deploys the built application to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3 # Uses a popular action for GitHub Pages deployment
+      - name: Add .nojekyll file # NEW STEP: Ensure GitHub Pages doesn't try to use Jekyll
+        run: touch ./dist/.nojekyll # Creates an empty .nojekyll file in your build output
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # Automatically provided by GitHub Actions for authentication
-          publish_dir: ./dist # IMPORTANT: Change this from './build' to './dist'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
