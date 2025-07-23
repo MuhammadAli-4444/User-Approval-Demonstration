@@ -30,6 +30,7 @@ if (rootElement) {
   );
 } else {
   // Log an error or display a message if the root element is not found
+
   console.error('Root element with ID "root" not found in the document.');
   // You might want to render a fallback UI or throw an error here in a real application
 }
